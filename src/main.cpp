@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "cpu/cpu.h"
-#include "mem/mem.h"
+#include <cpu/cpu.h>
+#include <mem/mem.h>
 
 int main()
 {

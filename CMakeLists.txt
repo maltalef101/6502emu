@@ -12,5 +12,6 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(main src/main.cpp)
-add_library(cpu STATIC src/cpu/cpu.cpp)
-add_library(mem STATIC src/mem/mem.cpp)
+include_directories(lib)
+# add_library(cpu STATIC src/cpu/cpu.cpp)
+# add_library(mem STATIC src/mem/mem.cpp)

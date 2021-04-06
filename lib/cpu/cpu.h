@@ -5,9 +5,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "../types/types.h"
+#include <types/types.h>
 
-#include "../mem/mem.h"
+#include <mem/mem.h>
 
 namespace CPU {
 
@@ -21,7 +21,7 @@ struct ProcessorStatus  // Status flags
     Bit V;          // Overflow flag
     Bit N;          // Negative flag
 
-    void setAllToZero();
+    void setAllToZero() { C = Z = I = D = B = V = N = 0; }; // sets all statusflags to zero
 };
 
 class CPU
@@ -31,11 +31,11 @@ public:
     void Reset(Mem::Mem& mem)
     {
         /* set all to zero */
-        CPU::m_PC = 0xFFFC;
-        CPU::m_SP = 0x0100;
+        m_PC = 0xFFFC;
+        m_SP = 0x0100;
         m_A = m_X = m_Y = 0;
 
-        m_PS.setAllToZero();
+        CPU::m_PS.setAllToZero();
 
         mem.Init();
     };
