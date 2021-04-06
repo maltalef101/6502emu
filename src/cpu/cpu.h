@@ -1,55 +1,15 @@
-#pragma once
+#ifndef CPU_H_
+#define CPU_H_
 
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "types.h"
+#include "../types/types.h"
 
-namespace Mem {
-
-class Mem
-{
-private:
-    static constexpr u32 MAX_MEM = 1024 * 64;
-
-public:
-    Byte Data[MAX_MEM];
-
-    void Init()
-    {
-        for (u32 i = 0; i < MAX_MEM; i++)
-            Data[i] = 0;
-    }
-
-    // read 1 byte
-    Byte operator[](u32 addr) const
-    {
-        // assert addr !> MAX_MEM
-        return Data[addr];
-    };
-
-    // write 1 byte
-    Byte& operator[](u32 addr)
-    {
-        // assert addr !> MAX_MEM
-        return Data[addr];
-    };
-
-    // write 1 word (2 bytes)
-    void WriteWord(Word val, u32 addr, u32& cycles)
-    {
-        Data[addr]     = val & 0xFF;
-        Data[addr + 1] = (val >> 8);
-        cycles -= 2;
-    }
-};
-
-};
+#include "../mem/mem.h"
 
 namespace CPU {
-
-static constexpr Byte INS_LDA_IM = 0xA9;
 
 struct ProcessorStatus  // Status flags
 {
@@ -61,7 +21,7 @@ struct ProcessorStatus  // Status flags
     Bit V;          // Overflow flag
     Bit N;          // Negative flag
 
-    void setAllToZero() { C = Z = I = D = B = V = N = 0; }; // sets all statusflags to zero
+    void setAllToZero();
 };
 
 class CPU
@@ -70,17 +30,15 @@ public:
     /* reset operation */
     void Reset(Mem::Mem& mem)
     {
-       /* set all to zero */
-       m_PC = 0xFFFC;
-       m_SP = 0x0100;
+        /* set all to zero */
+        CPU::m_PC = 0xFFFC;
+        CPU::m_SP = 0x0100;
+        m_A = m_X = m_Y = 0;
 
-       m_A = m_X = m_Y = 0;
+        m_PS.setAllToZero();
 
-       m_PS.setAllToZero();
-
-       mem.Init();
+        mem.Init();
     };
-
 
     /* Load/ Store operations */
 
@@ -111,10 +69,13 @@ private:
     ProcessorStatus m_PS;         // ProcessorStatus flags
 
     /* opcodes */
-    static constexpr Byte INS_LDA_IM  = 0xA9;
-    static constexpr Byte INS_LDA_ZP  = 0xA5;
-    static constexpr Byte INS_LDA_ZPX = 0xB5;
-    static constexpr Byte INS_JSR     = 0x20;
+    static constexpr Byte
+                    /* LDA */
+                    INS_LDA_IM  = 0xA9,
+                    INS_LDA_ZP  = 0xA5,
+                    INS_LDA_ZPX = 0xB5,
+    /**/
+                    INS_JSR     = 0x20;
 
     Byte FetchByte(u32& cycles, Mem::Mem& mem)
     {
@@ -182,3 +143,5 @@ private:
 };
 
 };
+
+#endif
